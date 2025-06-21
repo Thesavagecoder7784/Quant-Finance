@@ -21,3 +21,6 @@ Calculates your investment’s return based on market trends, company size, and 
 
 ### Fama-French 5-Factor Model
 Adds to the 3-factor model by also measuring profitability and the extent to which companies reinvest.
+
+### Multi-Style (AQR-like)
+Combines all the above and adds momentum, quality, and risk-taking style to explain returns more completely.
