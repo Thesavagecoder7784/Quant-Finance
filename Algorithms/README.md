@@ -16,11 +16,15 @@ Estimates how much money you could potentially lose over a specific period, unde
 2. Variance-Covariance (Parametric VaR) - uses the mathematical formula VaR = Z⋅σ⋅sqrt(t) to find the VaR
 3. Monte Carlo Simulation - Use a stochastic model (e.g., lognormal with drift and volatility) to simulate asset returns, generate portfolio value outcomes, and identify the 5th percentile loss as Value at Risk (VaR).
 
+### Multi-Factor Models
 ### Fama-French 3-Factor Model
 Calculates your investment’s return based on market trends, company size, and value vs growth style.
 
 ### Fama-French 5-Factor Model
 Adds to the 3-factor model by also measuring profitability and the extent to which companies reinvest.
+
+### Carhart 4-Factor Model
+Builds on the Fama-French 3-Factor model by adding momentum to explain returns from stocks that have recently performed well.
 
 ### Multi-Style (AQR-like)
 Combines all the above and adds momentum, quality, and risk-taking style to explain returns more completely.
