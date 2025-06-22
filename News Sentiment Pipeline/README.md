@@ -78,8 +78,10 @@ Finviz: No API key is strictly required as the current implementation uses basic
 4. Download NLTK Data
 The VADER sentiment analyzer requires specific lexicon data. The script will attempt to download it automatically, but you can do it manually if preferred:
 
+```code
 import nltk
 nltk.download('vader_lexicon')
+```
 
 ## How to Run the Pipeline
 The core logic is contained within the main.py file.
