@@ -39,10 +39,11 @@ Assuming you have these files saved locally.
 It is highly recommended to use a virtual environment.
 
 Install required packages
+```code
 pip install -r requirements.txt
+```
 
 ```
-requirements.txt content:
 requests  
 pandas
 nltk
@@ -89,7 +90,9 @@ The core logic is contained within the main.py file.
 Ensure all dependencies are installed and API keys are configured.
 
 Run the main.py script:
+```code
 python main.py
+```
 
 The script will:
 1. Create an SQLite database file (news_sentiment.db) if it doesn't exist.
@@ -99,7 +102,7 @@ The script will:
 5. Compute and print daily aggregated sentiment scores.
 6. Generate and display basic line plots for average VADER and FinBERT positive sentiment (if matplotlib and seaborn are installed and the visualize_sentiment_data function is uncommented in main.py's __name__ == "__main__" block).
 
-📊 Interpreting the Output
+Interpreting the Output
 The console output will display INFO and ERROR messages indicating the pipeline's progress and any issues (e.g., Reddit API errors due to incorrect credentials).
 
 The most important part of the output will be the DataFrame containing daily aggregates, similar to this:
