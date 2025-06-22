@@ -19,6 +19,7 @@ Quantitative funds heavily rely on sentiment signals in systematic strategies. U
 ## Project Structure
 The project is structured into modular Python files for better organization and maintainability:
 
+```
 .
 ├── .gitignore
 ├── config.py                 # Configuration settings (API keys, database name)
@@ -29,7 +30,7 @@ The project is structured into modular Python files for better organization and 
 ├── requirements.txt          # Lists all necessary Python dependencies
 ├── sentiment_analysis.py     # Functions for VADER and FinBERT sentiment analysis
 └── visualization.py          # Contains functions for visualizing aggregated sentiment data
-
+```
 ## Setup and Installation
 1. Clone the Repository (or save the files)
 Assuming you have these files saved locally.
@@ -40,6 +41,7 @@ It is highly recommended to use a virtual environment.
 Install required packages
 pip install -r requirements.txt
 
+```
 requirements.txt content:
 requests  
 pandas
@@ -50,6 +52,7 @@ praw
 beautifulsoup4
 matplotlib
 seaborn
+```
 
 3. Obtain API Keys
 This pipeline requires API keys for data ingestion. You'll need to set these in config.py (or directly in main.py if you prefer a single file structure, as in the current state of the provided code snippet).
