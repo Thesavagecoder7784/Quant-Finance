@@ -4,9 +4,7 @@ import datetime
 import logging
 import praw
 from bs4 import BeautifulSoup
-import yfinance as yf # New import for historical stock data
-
-# Import configurations
+import yfinance as yf
 import config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

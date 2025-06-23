@@ -2,10 +2,6 @@ import pandas as pd
 import logging
 import matplotlib.pyplot as plt
 import seaborn as sns
-import sqlite3
-
-# Import configuration
-import config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -18,10 +14,7 @@ def visualize_sentiment_data(df: pd.DataFrame):
         return
 
     df['date'] = pd.to_datetime(df['date'])
-
-    # Filter out 'MARKET' sentiment if desired for ticker-specific charts, or plot all
-    # df_filtered = df[df['ticker'] != 'MARKET']
-
+    
     # Plot VADER Compound Sentiment
     plt.figure(figsize=(14, 7))
     sns.lineplot(data=df, x='date', y='avg_vader_compound', hue='ticker', marker='o')

@@ -5,10 +5,7 @@ import torch
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Initialize VADER sentiment analyzer
 vader_analyzer = SentimentIntensityAnalyzer()
-
-# Initialize FinBERT model and tokenizer
 try:
     finbert_tokenizer = AutoTokenizer.from_pretrained("ProsusAI/finbert")
     finbert_model = AutoModelForSequenceClassification.from_pretrained("ProsusAI/finbert")

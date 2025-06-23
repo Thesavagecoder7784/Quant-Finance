@@ -1,8 +1,6 @@
 import sqlite3
 import pandas as pd
 import logging
-
-# Import configuration
 import config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 import logging
-
-# Import configurations
 import config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -39,10 +37,8 @@ def run_backtest(sentiment_df: pd.DataFrame, price_df: pd.DataFrame, initial_cap
     logging.info(f"Strategy: Buy if {sentiment_model} > {buy_threshold}, Sell if {sentiment_model} < {sell_threshold}")
     logging.info(f"Transaction cost per trade (buy/sell): {transaction_cost_percentage:.2%}")
 
-    # Ensure price_df index is datetime and normalized
     price_df.index = pd.to_datetime(price_df.index).normalize()
 
-    # Align sentiment and price data for iteration
     aligned_sentiment = sentiment_df.set_index(['date', 'ticker'])[sentiment_model].unstack().ffill()
     aligned_sentiment = aligned_sentiment.reindex(price_df.index, method='ffill')
     aligned_sentiment.dropna(how='all', inplace=True)
@@ -53,7 +49,6 @@ def run_backtest(sentiment_df: pd.DataFrame, price_df: pd.DataFrame, initial_cap
         logging.warning("Not enough aligned price or sentiment data for backtesting. Skipping backtest.")
         return pd.Series(dtype=float), pd.Series(dtype=float), pd.Series(dtype=float)
 
-    # Initialize portfolio tracking
     portfolio_value = pd.Series(index=price_df.index, dtype=float)
     current_cash = initial_capital
     current_shares = {ticker: 0.0 for ticker in price_df.columns} # Shares held per ticker

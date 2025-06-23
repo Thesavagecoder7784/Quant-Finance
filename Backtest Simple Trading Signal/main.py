@@ -1,7 +1,4 @@
 import logging
-import pandas as pd
-
-# Import functions/configurations from other modules
 import config
 import pipeline_orchestrator
 import database_manager
@@ -11,19 +8,20 @@ import visualization
 import matplotlib.pyplot as plt
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.info(f"--- Starting News Sentiment Pipeline ---")
 
 if __name__ == "__main__":
     # --- Step 1: Run the News Sentiment Pipeline ---
-    logging.info(f"--- Starting News Sentiment Pipeline ---")
-    logging.info(f"Fetching news sentiment for tickers: {config.TARGET_TICKERS} from {config.NEWS_START_DATE} to {config.NEWS_END_DATE}")
-    
-    # This will fetch news, analyze sentiment, and store in the database
-    pipeline_orchestrator.run_sentiment_pipeline(
-        config.TARGET_TICKERS,
-        config.NEWS_START_DATE,
-        config.NEWS_END_DATE
-    )
-    logging.info(f"--- News Sentiment Pipeline Finished ---")
+    # Comment this block out to skip data ingestion if your database is already populated
+    # logging.info(f"Fetching news sentiment for tickers: {config.TARGET_TICKERS} from {config.NEWS_START_DATE} to {config.NEWS_END_DATE}")
+    #
+    # pipeline_orchestrator.run_sentiment_pipeline(
+    #     config.TARGET_TICKERS,
+    #     config.NEWS_START_DATE,
+    #     config.NEWS_END_DATE
+    # )
+    # logging.info(f"--- News Sentiment Pipeline Finished ---")
+
 
     # --- Step 2: Retrieve Aggregated Sentiment Data for Backtesting/Visualization ---
     # Fetch sentiment data for the entire backtest period (which might be longer than news collection period)
@@ -58,7 +56,7 @@ if __name__ == "__main__":
             historical_prices_df = historical_prices_df[config.TARGET_TICKERS].dropna(how='all')
 
             portfolio_value_history, strategy_returns, benchmark_returns = backtesting.run_backtest(
-                sentiment_df=backtest_sentiment_df, # Use filtered sentiment
+                sentiment_df=backtest_sentiment_df,
                 price_df=historical_prices_df,
                 initial_capital=config.INITIAL_CAPITAL,
                 buy_threshold=config.BUY_THRESHOLD,

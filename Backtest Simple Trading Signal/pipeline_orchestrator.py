@@ -17,47 +17,76 @@ def run_sentiment_pipeline(tickers: list[str], start_date: str, end_date: str):
     database_manager.create_database_schema()
     all_processed_headlines = []
 
+    # --- Step 1: Fetch ALL general Reddit headlines ONCE ---
+    # These are not ticker-specific at this stage, and will be inferred later.
+    logging.info("Fetching general Reddit headlines from all configured subreddits...")
+    all_reddit_headlines_fetched = []
+    for sub in config.REDDIT_SUBREDDITS:
+        all_reddit_headlines_fetched.extend(data_ingestion.fetch_reddit(sub))
+    logging.info(f"Finished fetching all general Reddit headlines. Total: {len(all_reddit_headlines_fetched)} posts.")
+
+
+    # --- Step 2: Process headlines for each individual ticker ---
     for ticker in tickers:
         logging.info(f"Processing headlines for ticker: {ticker}")
 
-        # Ingest headlines from various sources
+        # Ingest headlines from ticker-specific sources
         newsapi_headlines = data_ingestion.fetch_newsapi(ticker, start_date, end_date)
-        # Yahoo Finance news is a conceptual placeholder
-        # yahoo_headlines = data_ingestion.fetch_yahoo_finance(ticker, start_date, end_date)
         finviz_headlines = data_ingestion.fetch_finviz(ticker)
 
-        # Fetch Reddit headlines from general subreddits
-        current_reddit_headlines = []
-        for sub in config.REDDIT_SUBREDDITS:
-            current_reddit_headlines.extend(data_ingestion.fetch_reddit(sub))
+        # Combine all raw headlines for the current ticker
+        # Initialize with ticker-specific headlines
+        raw_headlines_for_ticker = newsapi_headlines + finviz_headlines
 
-        raw_headlines = newsapi_headlines + finviz_headlines + current_reddit_headlines
+        # Add Reddit headlines that are relevant to this ticker (or general market)
+        # We iterate through all fetched Reddit headlines and associate them
+        for reddit_headline in all_reddit_headlines_fetched:
+            # Create a copy to avoid modifying the original list item during inference
+            headline_copy = reddit_headline.copy()
+            text = headline_copy.get("title", "")
+            
+            # Attempt to infer ticker for this Reddit headline
+            inferred_ticker = None
+            if text:
+                # Prioritize direct ticker match if the ticker is in the headline text
+                if ticker.lower() in text.lower():
+                    inferred_ticker = ticker
+                else:
+                    # Fallback to general keyword mapping
+                    for k_ticker, keywords in config.TICKER_KEYWORDS_MAP.items():
+                        if any(keyword.lower() in text.lower() for keyword in keywords):
+                            inferred_ticker = k_ticker
+                            break
+            
+            # Assign 'MARKET' if no specific ticker inferred, or the actual ticker
+            headline_copy["ticker"] = inferred_ticker if inferred_ticker else 'MARKET'
+            
+            # Only add to this ticker's processing if it's directly relevant or general market
+            # If you want ONLY ticker-specific Reddit posts, you'd change 'MARKET' below
+            if headline_copy["ticker"] == ticker or headline_copy["ticker"] == 'MARKET':
+                raw_headlines_for_ticker.append(headline_copy)
 
-        if not raw_headlines:
-            logging.warning(f"No headlines found for {ticker} from any active sources in the specified period.")
+
+        if not raw_headlines_for_ticker:
+            logging.warning(f"No relevant headlines found for {ticker} from any active sources in the specified period.")
             continue
 
-        for headline in raw_headlines:
+        for headline in raw_headlines_for_ticker:
             text = headline.get("title", "")
             if not text:
                 continue
 
-            # Attempt to infer ticker for Reddit/general news if not already present
-            headline_ticker = headline.get("ticker")
-            if headline_ticker is None and headline.get("source", "").startswith("Reddit"):
-                for k_ticker, keywords in config.TICKER_KEYWORDS_MAP.items():
-                    if any(keyword.lower() in text.lower() for keyword in keywords):
-                        headline_ticker = k_ticker
-                        break
-                if headline_ticker is None:
-                    headline_ticker = 'MARKET' # Assign 'MARKET' if no specific ticker inferred
+            # Ensure the ticker is correctly assigned after all inference attempts
+            # If it came from NewsAPI or Finviz, it already has the correct ticker.
+            # If it's a Reddit post, it has the inferred ticker or 'MARKET'.
+            final_headline_ticker = headline.get("ticker")
 
             vader_sentiment = sentiment_analysis.analyze_vader_sentiment(text)
             finbert_sentiment = sentiment_analysis.analyze_finbert_sentiment(text)
 
             processed_headline = {
                 "timestamp": headline.get("timestamp", datetime.datetime.now().isoformat()),
-                "ticker": headline_ticker,
+                "ticker": final_headline_ticker,
                 "headline": text,
                 "source": headline.get("source", "Unknown"),
                 "vader_compound": vader_sentiment["compound"],
