@@ -27,6 +27,7 @@ Visualization: Provides basic plots to visualize sentiment trends over time for 
 Quantitative funds and algorithmic traders increasingly leverage alternative data sources like news sentiment to identify market inefficiencies and generate alpha. This pipeline demonstrates how sentiment signals can be quantified and evaluated, offering insights into market dynamics and potentially informing data-driven trading decisions. Rigorous backtesting is critical to validate if a strategy offers a statistical edge before risking real capital.
 
 ## Project Structure
+```
 .
 ├── .gitignore
 ├── config.py                 # Centralized configuration settings (API keys, parameters, thresholds)
@@ -38,6 +39,7 @@ Quantitative funds and algorithmic traders increasingly leverage alternative dat
 ├── visualization.py          # Contains functions for visualizing aggregated sentiment data and backtest performance
 └── main.py                   # The main entry point to run the entire pipeline (orchestrates sentiment + backtest)
 └── requirements.txt          # Lists all necessary Python dependencies
+```
 
 ## Setup and Installation
 1. Clone the Repository (or save the files)
