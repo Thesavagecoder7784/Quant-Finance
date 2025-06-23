@@ -1,0 +1,2 @@
+Backtesting Module: Financial News Sentiment Pipeline
+This module is a crucial component of the Financial News Sentiment Pipeline, designed to rigorously evaluate the effectiveness of sentiment-based trading strategies using historical market data. By simulating trades based on news sentiment signals, it helps determine if the sentiment analysis truly adds "alpha" (excess returns) beyond a simple benchmark.
