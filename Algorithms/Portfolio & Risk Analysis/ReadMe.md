@@ -27,7 +27,7 @@ Calmar Ratio = Average Annual Rate of Return / Maximum Drawdown
 5. Beta (β)
 Measures a stock's volatility relative to the overall market. Indicates how much a stock's price tends to move compared to the market as a whole.
 
-Beta = (E(Rs) - Rf)/ E(Rm) - Rf
+Beta = (E(Rs) - Rf)/ E(Rm) - Rf  (or) Covariance(Portfolio Returns, Market Returns) / Variance(Market Returns)
 
 - E(Rs): Expected return from investment
 - E(Rm): Expected return from market
