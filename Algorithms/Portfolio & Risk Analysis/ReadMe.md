@@ -69,7 +69,7 @@ Annual Risk-Free Rate: 2.00%
 5. Beta (vs Market): 0.0238
 6. Jensen's Alpha (annualized): -0.1966
 7. Treynor Ratio: -2.8578
-9. CAGR (Initial: 100000.00, Final: 86240.56): -0.0481 (-4.81%)
+8. CAGR (Initial: 100000.00, Final: 86240.56): -0.0481 (-4.81%)
 
 --- Interpretation Hints ---
 Sharpe Ratio: Higher is better, indicates better risk-adjusted return (total risk).
