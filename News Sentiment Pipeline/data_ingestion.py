@@ -4,6 +4,8 @@ import logging
 import praw
 import requests
 from bs4 import BeautifulSoup
+import yfinance as yf
+import pandas as pd
 
 from config import NEWSAPI_KEY, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USER_AGENT
 
@@ -96,3 +98,24 @@ def fetch_finviz(ticker: str) -> list[dict]:
     except Exception as e:
         logging.error(f"An unexpected error occurred during Finviz scraping for {ticker}: {e}")
     return headlines
+
+
+def fetch_yfinance_data(ticker: str, start_date: str, end_date: str, frequency: str = '1d') -> pd.DataFrame:
+    logging.info(f"Fetching historical data for {ticker} from {start_date} to {end_date} with frequency {frequency}.")
+    try:
+        stock_data = yf.download(ticker, start=start_date, end=end_date, interval=frequency)
+        if stock_data.empty:
+            logging.warning(f"No data found for {ticker} for the given date range and frequency.")
+            return pd.DataFrame()
+
+        stock_data.index = pd.to_datetime(stock_data.index)
+
+        # Handle missing values
+        stock_data.ffill(inplace=True)
+        stock_data.bfill(inplace=True)
+
+        logging.info(f"Successfully fetched and cleaned data for {ticker}.")
+        return stock_data
+    except Exception as e:
+        logging.error(f"Error fetching data from yfinance for {ticker}: {e}")
+        return pd.DataFrame()
