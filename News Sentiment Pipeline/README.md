@@ -6,12 +6,15 @@ This project implements a comprehensive pipeline to ingest financial headlines f
     - NewsAPI: For broad news coverage related to specific tickers.
     - Reddit: Fetches discussions from financial subreddits (e.g., r/stocks, r/wallstreetbets), attempting to associate general news with relevant tickers.
     - Finviz (Basic Web Scraping): Extracts headlines for specific tickers directly from Finviz.
+    - yfinance: Fetches historical stock data for tickers.
 - Dual Sentiment Analysis: Applies two distinct sentiment models for robust analysis:
     - VADER (Valence Aware Dictionary and sEntiment Reasoner): A lexicon and rule-based sentiment analysis tool that is specifically attuned to sentiments expressed in social media.
     - FinBERT: A transformer-based model (RoBERTa fine-tuned on financial text) designed for better accuracy in the financial domain.
 - Data Storage: Persists all raw headlines and their associated sentiment scores in an SQLite database (news_sentiment.db) for easy access and historical analysis. The architecture supports easy migration to PostgreSQL.
 - Daily Aggregates: Computes daily average sentiment scores for each ticker, providing a concise summary of sentiment trends.
 - Visualization Guidance: Visualizes the sentiment with different tickers using matplotlib and seaborn
+- Batch Processing: Efficiently processes headlines in batches for improved performance.
+- Modular Architecture: The project is structured into modular Python files for better organization and maintainability.
 
 ## Why it Matters
 Quantitative funds heavily rely on sentiment signals in systematic strategies. Understanding the collective mood expressed in financial news can provide valuable insights into market movements, enabling data-driven trading decisions.
@@ -24,6 +27,7 @@ The project is structured into modular Python files for better organization and 
 ├── .gitignore
 ├── config.py                 # Configuration settings (API keys, database name)
 ├── data_ingestion.py         # Functions for fetching headlines from various sources (NewsAPI, Reddit, Finviz)
+├── data_processor.py         # Functions for processing raw data before sentiment analysis
 ├── database_manager.py       # Functions for creating database schema and storing/retrieving data
 ├── main.py                   # The main entry point to run the entire pipeline
 ├── pipeline_orchestrator.py  # Orchestrates the data flow through ingestion, analysis, and storage
@@ -41,18 +45,6 @@ It is highly recommended to use a virtual environment.
 Install required packages
 ```code
 pip install -r requirements.txt
-```
-
-```
-requests  
-pandas
-nltk
-transformers
-torch
-praw
-beautifulsoup4
-matplotlib
-seaborn
 ```
 
 3. Obtain API Keys

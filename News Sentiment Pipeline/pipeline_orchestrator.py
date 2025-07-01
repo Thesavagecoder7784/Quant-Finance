@@ -4,6 +4,8 @@ import logging
 from data_ingestion import fetch_finviz, fetch_newsapi, fetch_reddit
 from database_manager import create_database_schema, store_sentiment_data
 from sentiment_analysis import analyze_finbert_sentiment, analyze_vader_sentiment
+from data_processor import assign_ticker_to_reddit_headlines, process_headlines_in_batch
+from config import get_finbert_models, vader_analyzer
 
 def run_sentiment_pipeline(tickers: list[str], start_date: str, end_date: str):
     create_database_schema()
@@ -21,37 +23,17 @@ def run_sentiment_pipeline(tickers: list[str], start_date: str, end_date: str):
     reddit_headlines = []
     for sub in reddit_subreddits:
         reddit_headlines.extend(fetch_reddit(sub))
+    
+    reddit_headlines = assign_ticker_to_reddit_headlines(reddit_headlines, ticker_keywords_map)
+    
+    finbert_tokenizer, finbert_model = get_finbert_models()
+    sentiment_analyzers = {
+        'vader': vader_analyzer,
+        'finbert': lambda texts: analyze_finbert_sentiment(texts, finbert_tokenizer, finbert_model)  # Passing models
+    }
 
-    for headline in reddit_headlines:
-        text = headline.get("title", "")
-        if not text:
-            continue
-
-        # Assign ticker based on keywords
-        headline_ticker = None
-        for k_ticker, keywords in ticker_keywords_map.items():
-            if any(keyword.lower() in text.lower() for keyword in keywords):
-                headline_ticker = k_ticker
-                break
-        if headline_ticker is None:
-            headline_ticker = 'MARKET'
-
-        vader_sentiment = analyze_vader_sentiment(text)
-        finbert_sentiment = analyze_finbert_sentiment(text)
-
-        processed_headline = {
-            "timestamp": headline.get("timestamp", datetime.datetime.now().isoformat()),
-            "ticker": headline_ticker,
-            "headline": text,
-            "source": headline.get("source", "Unknown"),
-            "vader_compound": vader_sentiment["compound"],
-            "vader_classification": vader_sentiment["classification"],
-            "finbert_positive": finbert_sentiment["positive"],
-            "finbert_negative": finbert_sentiment["negative"],
-            "finbert_neutral": finbert_sentiment["neutral"],
-            "finbert_classification": finbert_sentiment["classification"]
-        }
-        all_processed_headlines.append(processed_headline)
+    processed_reddit_headlines = process_headlines_in_batch(reddit_headlines, sentiment_analyzers)
+    all_processed_headlines.extend(processed_reddit_headlines)
     logging.info(f"Finished processing {len(reddit_headlines)} Reddit headlines.")
 
 
@@ -68,27 +50,11 @@ def run_sentiment_pipeline(tickers: list[str], start_date: str, end_date: str):
             logging.warning(f"No ticker-specific headlines found for {ticker} from any active sources in the specified period.")
             continue
 
-        for headline in raw_headlines:
-            text = headline.get("title", "")
-            if not text:
-                continue
-
-            vader_sentiment = analyze_vader_sentiment(text)
-            finbert_sentiment = analyze_finbert_sentiment(text)
-
-            processed_headline = {
-                "timestamp": headline.get("timestamp", datetime.datetime.now().isoformat()),
-                "ticker": headline.get("ticker", ticker.upper()),
-                "headline": text,
-                "source": headline.get("source", "Unknown"),
-                "vader_compound": vader_sentiment["compound"],
-                "vader_classification": vader_sentiment["classification"],
-                "finbert_positive": finbert_sentiment["positive"],
-                "finbert_negative": finbert_sentiment["negative"],
-                "finbert_neutral": finbert_sentiment["neutral"],
-                "finbert_classification": finbert_sentiment["classification"]
-            }
-            all_processed_headlines.append(processed_headline)
+        processed_ticker_headlines = process_headlines_in_batch(raw_headlines, sentiment_analyzers)
+        for headline in processed_ticker_headlines:
+            if 'ticker' not in headline or not headline['ticker']:
+                headline['ticker'] = ticker.upper()
+        all_processed_headlines.extend(processed_ticker_headlines)
 
     if all_processed_headlines:
         store_sentiment_data(all_processed_headlines)

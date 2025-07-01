@@ -19,24 +19,26 @@ def analyze_vader_sentiment(text: str) -> dict:
         classification = "neutral"
     return {"compound": compound_score, "classification": classification}
 
-def analyze_finbert_sentiment(text: str) -> dict:
-    if not finbert_model or not finbert_tokenizer or not text:
-        logging.warning("FinBERT model or tokenizer not loaded, or text is empty. Skipping FinBERT analysis.")
-        return {"positive": 0.0, "negative": 0.0, "neutral": 0.0, "classification": "neutral"}
+def analyze_finbert_sentiment(texts: list[str], tokenizer, model) -> list[dict]:
+    if not model or not tokenizer or not texts:
+        logging.warning("FinBERT model or tokenizer not loaded, or texts are empty. Skipping FinBERT analysis.")
+        return [{"positive": 0.0, "negative": 0.0, "neutral": 0.0, "classification": "neutral"}] * len(texts)
 
-    inputs = finbert_tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
+    inputs = tokenizer(texts, return_tensors="pt", padding=True, truncation=True, max_length=512)
 
     with torch.no_grad():
-        outputs = finbert_model(**inputs)
+        outputs = model(**inputs)
         predictions = torch.nn.functional.softmax(outputs.logits, dim=-1)
-    labels = ["negative", "neutral", "positive"]
-    sentiment_scores = {label: pred.item() for label, pred in zip(labels, predictions[0])}
-
-    classification = labels[torch.argmax(predictions)]
-
-    return {
-        "positive": sentiment_scores.get("positive", 0.0),
-        "negative": sentiment_scores.get("negative", 0.0),
-        "neutral": sentiment_scores.get("neutral", 0.0),
-        "classification": classification
-    }
+    
+    labels = ["positive", "negative", "neutral"]
+    results = []
+    for pred in predictions:
+        sentiment_scores = {label: p.item() for label, p in zip(labels, pred)}
+        classification = labels[torch.argmax(pred)]
+        results.append({
+            "positive": sentiment_scores.get("positive", 0.0),
+            "negative": sentiment_scores.get("negative", 0.0),
+            "neutral": sentiment_scores.get("neutral", 0.0),
+            "classification": classification
+        })
+    return results
