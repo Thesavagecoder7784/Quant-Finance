@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Quant-Finance/static/css/main.827b1167.css",
+    "main.js": "/Quant-Finance/static/js/main.47064ed0.js",
+    "static/js/453.a3c1d153.chunk.js": "/Quant-Finance/static/js/453.a3c1d153.chunk.js",
+    "index.html": "/Quant-Finance/index.html",
+    "main.827b1167.css.map": "/Quant-Finance/static/css/main.827b1167.css.map",
+    "main.47064ed0.js.map": "/Quant-Finance/static/js/main.47064ed0.js.map",
+    "453.a3c1d153.chunk.js.map": "/Quant-Finance/static/js/453.a3c1d153.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.827b1167.css",
+    "static/js/main.47064ed0.js"
+  ]
+}
