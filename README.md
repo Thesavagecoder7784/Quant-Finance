@@ -13,6 +13,5 @@ Repository containing everything I've learned about Quantitative Finance over th
   - Linear Algebra Applications - PCA and SVD algorithms
 - News Sentiment Pipeline – Ingests financial headlines from multiple sources (NewsAPI, Reddit, Finviz), analyzes sentiment using VADER and FinBERT, and stores daily-aggregated scores per ticker in a database to surface market mood signals.
 - Backtest Simple Trading Signal – Converts those sentiment scores into buy/sell rules, runs a backtesting engine (with realistic costs) over historical prices, and evaluates portfolio performance via metrics like Sharpe, drawdown, cumulative returns, and win rate.
-- Backtest Advanced Trading Signal - Converts sentiment scores into buy/sell rules, runs a backtesting engine (with realistic costs) over historical prices, and evaluates portfolio performance via metrics like Sharpe, drawdown, cumulative returns, and win rate.
 - Time-Series Analysis - Core framework for analyzing sequential market data. Involves identifying trends, seasonality, and autocorrelation within historical price or return series. Tools include ARIMA, GARCH, Cointegration, and stationarity tests (ADF, KPSS). Enables forecasting, anomaly detection, and modeling dependencies for financial instruments across time.
 - Option Pricing Tool - A React-based tool for pricing options using the Black-Scholes model.
