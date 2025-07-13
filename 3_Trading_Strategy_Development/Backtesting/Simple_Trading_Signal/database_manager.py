@@ -83,6 +83,7 @@ def get_daily_aggregates(db_name: str = config.DATABASE_NAME) -> pd.DataFrame:
     """
     df = pd.read_sql_query(query, conn)
     conn.close()
+    logging.info(f"SQL query returned {len(df)} rows.")
     df['date'] = pd.to_datetime(df['date'])
     logging.info("Generated daily sentiment aggregates.")
     return df
