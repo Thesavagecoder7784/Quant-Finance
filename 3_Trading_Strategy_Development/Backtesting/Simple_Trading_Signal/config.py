@@ -48,27 +48,30 @@ REDDIT_SUBREDDITS = [
 ]
 
 # --- Date Range Configuration ---
-TODAY = datetime.date.today()
+# Set the overall period for data ingestion to the last two months
+NEWS_START_DATE = "2025-05-12"
+NEWS_END_DATE = "2025-07-11"
 
-# Fetch news sentiment for the last 7 days by default
-NEWS_START_DATE = (TODAY - datetime.timedelta(days=7)).isoformat()
-NEWS_END_DATE = TODAY.isoformat()
+# Define the split for training and testing (out-of-sample)
+# Training period: First ~70% of the data
+TRAIN_START_DATE = "2025-05-12"
+TRAIN_END_DATE = "2025-06-22"
 
-# Backtesting period (e.g., 2 years for more meaningful results)
-BACKTEST_START_DATE = (TODAY - datetime.timedelta(days=365*2)).isoformat()
-BACKTEST_END_DATE = TODAY.isoformat()
+# Testing period: Last ~30% of the data, unseen by the strategy during training
+TEST_START_DATE = "2025-06-23"
+TEST_END_DATE = "2025-07-11"
 
 # --- Backtesting Strategy Parameters ---
 INITIAL_CAPITAL = 100000
 BUY_THRESHOLD = 0.1       # Threshold to generate a buy signal
 SELL_THRESHOLD = -0.05    # Threshold to generate a sell signal
-SENTIMENT_MODEL_FOR_STRATEGY = 'avg_vader_compound' # Can be 'avg_vader_compound' or 'finbert_sentiment_diff'
-TRADING_AMOUNT_PER_TRADE_PERCENTAGE = 0.1 # Trade 10% of current available capital/holdings per signal
+SENTIMENT_MODEL_FOR_STRATEGY = 'finbert_net_sentiment' # Use FinBERT net sentiment for strategy
+TRADING_AMOUNT_PER_TRADE_PERCENTAGE = 0.25 # Trade 25% of current available capital/holdings per signal
 TRANSACTION_COST_PERCENTAGE = 0.001
 
 # --- Sharpe Ratio Parameters ---
 RISK_FREE_RATE_ANNUAL = 0.0001 # 0.01% annual risk-free rate for Sharpe calculation
 TRADING_DAYS_PER_YEAR = 252
 
-STOP_LOSS_PERCENTAGE = 0.05  # 5% stop loss
-TAKE_PROFIT_PERCENTAGE = 0.10 # 10% take profit
+STOP_LOSS_PERCENTAGE = 0.07  # 7% stop loss
+TAKE_PROFIT_PERCENTAGE = 0.25 # 25% take profit
