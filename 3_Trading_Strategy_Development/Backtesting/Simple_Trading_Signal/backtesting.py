@@ -1,4 +1,14 @@
 import pandas as pd
+import config
+import logging
+
+
+import pandas as pd
+import numpy as np
+import logging
+import config
+
+import pandas as pd
 import numpy as np
 import logging
 import config
@@ -39,8 +49,12 @@ def run_backtest(sentiment_df: pd.DataFrame, price_df: pd.DataFrame, initial_cap
 
     price_df.index = pd.to_datetime(price_df.index).normalize()
 
+    # Create FinBERT Net Sentiment if it's the chosen model
+    if sentiment_model == 'finbert_net_sentiment':
+        sentiment_df['finbert_net_sentiment'] = sentiment_df['avg_finbert_positive'] - sentiment_df['avg_finbert_negative']
+
     aligned_sentiment = sentiment_df.set_index(['date', 'ticker'])[sentiment_model].unstack().ffill()
-    aligned_sentiment = aligned_sentiment.reindex(price_df.index, method='ffill')
+    aligned_sentiment = aligned_sentiment.shift(1).reindex(price_df.index, method='ffill')
     aligned_sentiment.dropna(how='all', inplace=True)
     
     price_df = price_df.reindex(aligned_sentiment.index).dropna(how='all')
@@ -101,12 +115,44 @@ def run_backtest(sentiment_df: pd.DataFrame, price_df: pd.DataFrame, initial_cap
         # Determine trades for each ticker based on aligned sentiment
         for ticker in price_df.columns:
             if ticker in aligned_sentiment.columns and not pd.isna(current_prices[ticker]):
+                current_price = current_prices[ticker]
+
+                # --- Check for Stop Loss / Take Profit --- 
+                # Create a temporary list to hold positions that are not closed
+                temp_open_trades_for_ticker = []
+                for pos in open_trades[ticker]:
+                    if pos['shares'] > 0: # Only process active positions
+                        action = None
+                        if current_price <= pos['stop_loss_price']:
+                            action = "STOP_LOSS"
+                        elif current_price >= pos['take_profit_price']:
+                            action = "TAKE_PROFIT"
+                        
+                        if action:
+                            shares_to_close = pos['shares']
+                            revenue_from_sale = shares_to_close * current_price
+                            transaction_cost = revenue_from_sale * transaction_cost_percentage
+                            
+                            profit_loss_on_closing = (current_price - pos['buy_price']) * shares_to_close
+                            closed_trades_results.append({
+                                'profit_loss': profit_loss_on_closing,
+                                'status': 'win' if profit_loss_on_closing > 0 else ('loss' if profit_loss_on_closing < 0 else 'neutral')
+                            })
+                            current_cash += (revenue_from_sale - transaction_cost)
+                            current_shares[ticker] -= shares_to_close
+                            trade_count += 1 # Count as a forced sell trade
+                            logging.debug(f"{current_date} - {action} SELL {shares_to_close:.2f} {ticker} @ {current_price:.2f} (P/L: {profit_loss_on_closing:.2f})")
+                        else:
+                            temp_open_trades_for_ticker.append(pos) # Keep this position open
+                open_trades[ticker] = temp_open_trades_for_ticker # Update open_trades for this ticker
+
+                # --- Sentiment-based Buy/Sell Logic ---
                 sentiment_score = aligned_sentiment.loc[current_date, ticker]
 
                 if pd.isna(sentiment_score):
                     continue
 
-                current_price = current_prices[ticker]
+                # current_price is already defined above
                 
                 # Buy Logic
                 if sentiment_score >= buy_threshold and current_cash > 0:
@@ -121,7 +167,18 @@ def run_backtest(sentiment_df: pd.DataFrame, price_df: pd.DataFrame, initial_cap
                             current_shares[ticker] += shares_to_buy
                             current_cash -= (cost_of_shares + transaction_cost)
                             trade_count += 1
-                            open_trades[ticker].append({'shares': shares_to_buy, 'buy_price': current_price, 'buy_date': current_date})
+                            
+                            # Calculate stop loss and take profit prices
+                            stop_loss_price = current_price * (1 - config.STOP_LOSS_PERCENTAGE)
+                            take_profit_price = current_price * (1 + config.TAKE_PROFIT_PERCENTAGE)
+
+                            open_trades[ticker].append({
+                                'shares': shares_to_buy, 
+                                'buy_price': current_price, 
+                                'buy_date': current_date,
+                                'stop_loss_price': stop_loss_price,
+                                'take_profit_price': take_profit_price
+                            })
                             logging.debug(f"{current_date} - BUY {shares_to_buy:.2f} {ticker} @ {current_price:.2f} (Sentiment: {sentiment_score:.3f}, Cost: {transaction_cost:.2f})")
                         else:
                             logging.debug(f"{current_date} - Not enough cash for {ticker} shares + transaction cost.")
@@ -157,7 +214,9 @@ def run_backtest(sentiment_df: pd.DataFrame, price_df: pd.DataFrame, initial_cap
                             temp_open_trades.append({
                                 'shares': oldest_trade['shares'] - shares_to_sell_from_this_position,
                                 'buy_price': oldest_trade['buy_price'],
-                                'buy_date': oldest_trade['buy_date']
+                                'buy_date': oldest_trade['buy_date'],
+                                'stop_loss_price': oldest_trade['stop_loss_price'],
+                                'take_profit_price': oldest_trade['take_profit_price']
                             })
                     
                     open_trades[ticker].extend(temp_open_trades) # Add back any remaining partial positions
