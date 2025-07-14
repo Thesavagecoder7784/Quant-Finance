@@ -47,29 +47,6 @@ This section includes implementations of various financial models and quantitati
 - **Advanced Option Pricing & Derivatives**
   - `exotic_options_pricing.py`: Python script for pricing exotic options.
 - **Option Pricing Tool (React Application)**
-  - `client/`: Frontend React application for option pricing.
-    - `public/`: Public assets for the React app.
-      - `favicon.ico`
-      - `index.html`
-      - `logo192.png`
-      - `logo512.png`
-      - `manifest.json`
-      - `robots.txt`
-    - `src/`: Source code for the React app.
-      - `App.css`
-      - `App.js`
-      - `App.test.js`
-      - `index.css`
-      - `index.js`
-      - `logo.svg`
-      - `reportWebVitals.js`
-      - `setupTests.js`
-      - `components/`
-        - `OptionPricer.js`: React component for option pricing input.
-        - `PayoffChart.js`: React component for displaying payoff charts.
-        - `Results.js`: React component for displaying results.
-      - `utils/`
-        - `blackScholes.js`: JavaScript implementation of Black-Scholes for the React app.
 
 #### Stochastic Processes
 - `branching_process.py`: Python script for simulating branching processes.
