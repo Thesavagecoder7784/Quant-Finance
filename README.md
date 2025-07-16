@@ -1,6 +1,6 @@
 # Quant Finance Repository
 
-This repository contains a collection of projects and implementations related to Quantitative Finance, covering various models, trading strategies, and analytical tools.
+This repository contains a collection of projects and implementations related to Quantitative Finance, covering various models, trading strategies, and analytical tools. 
 
 ## Contents
 
