@@ -143,3 +143,5 @@ This section contains the setup for a live paper trading bot.
 
 - `README.md`: This file.
 - `xgboost_model.pkl`: A pickled XGBoost model.
+
+XGBoost is being used for machine learning models to be integrated into the backtesting pipeline
