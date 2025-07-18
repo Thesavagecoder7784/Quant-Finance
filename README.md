@@ -123,22 +123,11 @@ This section provides tools and implementations for advanced time series analysi
 
 This section contains the setup for a live paper trading bot, demonstrating real-time data integration and automated order execution.
 
--   `config.py`: Configuration for Alpaca API keys and trading parameters.
--   `main.py`: Main entry point for the trading bot, implementing a simple SMA crossover and RSI strategy with Alpaca's paper trading API.
+- `config.py`: Configuration for the trading bot.
+- `main.py`: Main entry point for the trading bot.
+- `requirements.txt`: Python dependencies for the trading bot.
 
-## Technologies Used
+## Other Files
 
-*   **Languages:** Python, JavaScript
-*   **Core Libraries:** NumPy, Pandas, SciPy, scikit-learn, statsmodels, arch
-*   **Financial Data & APIs:** yfinance, NewsAPI, PRAW (Reddit API Wrapper), Alpaca Trade API, BeautifulSoup4 (for web scraping Finviz)
-*   **Machine Learning & NLP:** XGBoost, NLTK (VADER), Hugging Face Transformers (FinBERT)
-*   **Visualization:** Matplotlib, Seaborn, Chart.js
-*   **Web Development:** React (for Option Pricing Tool)
-*   **Database:** SQLite
-*   **Environment Management:** python-dotenv
-
-## How to Explore and Run Projects
-
-Each major project directory (`1_Financial_Models`, `2_Portfolio_Management`, etc.) contains its own `README.md` with specific setup and execution instructions. Generally, Python projects require installing dependencies from `requirements.txt` (e.g., `pip install -r requirements.txt`) and running the `main.py` script. The React application has its own `npm install` and `npm start` commands.
-
-For API-dependent projects (e.g., NewsAPI, Reddit, Alpaca), you will need to obtain your own API keys and configure them in the respective `config.py` or `.env` files as instructed within those project directories.
+- `README.md`: This file.
+- `xgboost_model.pkl`: A pickled XGBoost model.
