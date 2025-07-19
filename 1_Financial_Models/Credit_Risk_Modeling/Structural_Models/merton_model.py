@@ -53,7 +53,6 @@ if __name__ == '__main__':
     # Example with higher debt
     D_high = 950
     prob_default_high, dist_default_high = merton_model(V, D_high, T, sigma_V, r)
-    print(f"
-Example with higher debt (D={D_high}):")
+    print(f"  Example with higher debt (D={D_high}):")
     print(f"  Probability of Default: {prob_default_high:.4f}")
     print(f"  Distance to Default: {dist_default_high:.4f}")

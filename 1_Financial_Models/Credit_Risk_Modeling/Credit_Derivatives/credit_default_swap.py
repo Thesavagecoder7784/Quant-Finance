@@ -80,6 +80,5 @@ if __name__ == '__main__':
     # Example with higher hazard rate
     H_high = 0.05
     cds_pricing_high = price_credit_default_swap(N, RR, H_high, T, R)
-    print(f"
-Example with higher hazard rate (H={H_high:.2%}):")
+    print(f"Example with higher hazard rate (H={H_high:.2%}):")
     print(f"  Fair CDS Spread: {cds_pricing_high['fair_spread_bps']:.2f} bps")

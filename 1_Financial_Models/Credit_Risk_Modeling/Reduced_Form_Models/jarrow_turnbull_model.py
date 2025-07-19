@@ -38,7 +38,6 @@ if __name__ == '__main__':
     # Example with different hazard rate
     lambda_2 = 0.05
     surv_prob_2, def_prob_2 = jarrow_turnbull_model(lambda_2, t)
-    print(f"
-Example with higher hazard rate (lambda={lambda_2}):")
+    print(f"Example with higher hazard rate (lambda={lambda_2}):")
     print(f"  Survival Probability: {surv_prob_2:.4f}")
     print(f"  Default Probability: {def_prob_2:.4f}")
