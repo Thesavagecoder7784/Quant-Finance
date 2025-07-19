@@ -126,8 +126,3 @@ This section contains the setup for a live paper trading bot, demonstrating real
 - `config.py`: Configuration for the trading bot.
 - `main.py`: Main entry point for the trading bot.
 - `requirements.txt`: Python dependencies for the trading bot.
-
-## Other Files
-
-- `README.md`: This file.
-- `xgboost_model.pkl`: A pickled XGBoost model.
