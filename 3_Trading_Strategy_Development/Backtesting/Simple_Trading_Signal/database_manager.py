@@ -70,7 +70,7 @@ def get_daily_aggregates(db_name: str = config.DATABASE_NAME) -> pd.DataFrame:
     conn = sqlite3.connect(db_name)
     query = """
         SELECT
-            strftime('%Y-%m-%d', timestamp) as date,
+            strftime('%Y-%m-%d', timestamp, 'localtime') as date,
             ticker,
             AVG(vader_compound) as avg_vader_compound,
             AVG(finbert_positive) as avg_finbert_positive,
