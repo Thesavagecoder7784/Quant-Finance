@@ -18,7 +18,7 @@ def calculate_drawdowns(returns: pd.Series) -> tuple[float, pd.Series]:
 def calculate_sharpe_ratio(returns: pd.Series, risk_free_rate_annual: float = config.RISK_FREE_RATE_ANNUAL, periods_per_year: int = config.TRADING_DAYS_PER_YEAR) -> float:
     """Calculates the annualized Sharpe Ratio."""
     if returns.empty or returns.std() == 0:
-        return 0.0
+        return np.nan
     excess_returns = returns - (risk_free_rate_annual / periods_per_year)
     sharpe_ratio = np.sqrt(periods_per_year) * (excess_returns.mean() / excess_returns.std())
     return sharpe_ratio
