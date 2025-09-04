@@ -49,17 +49,17 @@ REDDIT_SUBREDDITS = [
 
 # --- Date Range Configuration ---
 # Set the overall period for data ingestion to the last two months
-NEWS_START_DATE = "2025-05-12"
-NEWS_END_DATE = "2025-07-11"
+NEWS_START_DATE = "2025-08-01"
+NEWS_END_DATE = "2025-08-12"
 
 # Define the split for training and testing (out-of-sample)
 # Training period: First ~70% of the data
-TRAIN_START_DATE = "2025-05-12"
-TRAIN_END_DATE = "2025-06-22"
+TRAIN_START_DATE = "2025-08-01"
+TRAIN_END_DATE = "2025-08-10"
 
 # Testing period: Last ~30% of the data, unseen by the strategy during training
-TEST_START_DATE = "2025-06-23"
-TEST_END_DATE = "2025-07-11"
+TEST_START_DATE = "2025-08-11"
+TEST_END_DATE = "2025-08-12"
 
 # --- Backtesting Strategy Parameters ---
 INITIAL_CAPITAL = 100000
