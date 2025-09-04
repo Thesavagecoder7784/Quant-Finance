@@ -113,9 +113,9 @@ def optimize_parameters(sentiment_df_train: pd.DataFrame, price_df_train: pd.Dat
             )
             
             current_sharpe = backtesting.calculate_sharpe_ratio(daily_returns)
-            logging.debug(f"  -> Sharpe: {current_sharpe:.2f}")
-
-            if current_sharpe > best_sharpe:
+            
+            # Only update best_sharpe if current_sharpe is not NaN and is greater
+            if not np.isnan(current_sharpe) and current_sharpe > best_sharpe:
                 best_sharpe = current_sharpe
                 best_params['buy_threshold'] = buy_t
                 best_params['sell_threshold'] = sell_t
