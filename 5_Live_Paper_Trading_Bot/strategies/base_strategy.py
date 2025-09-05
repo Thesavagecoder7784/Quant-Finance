@@ -19,3 +19,12 @@ class Strategy(ABC):
         :return: A dictionary of signals for each symbol.
         """
         pass
+
+    @abstractmethod
+    def get_state(self):
+        """
+        Gets the current state of the strategy.
+
+        :return: A dictionary representing the strategy's state.
+        """
+        pass
