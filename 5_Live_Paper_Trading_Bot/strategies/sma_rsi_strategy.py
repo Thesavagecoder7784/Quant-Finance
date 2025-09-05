@@ -26,6 +26,7 @@ class SmaRsiStrategy(Strategy):
     """
     def __init__(self, symbols, parameters):
         super().__init__("SMA/RSI Crossover", symbols, parameters)
+        self.indicator_data = {}
 
     def generate_signals(self, data):
         """
@@ -46,6 +47,7 @@ class SmaRsiStrategy(Strategy):
 
             symbol_data = calculate_smas(symbol_data, short_sma_period, long_sma_period)
             symbol_data = calculate_rsi(symbol_data, rsi_period)
+            self.indicator_data[symbol] = symbol_data
 
             if symbol_data.iloc[-1].isnull().any():
                 signals[symbol] = {'signal': 'hold'}
@@ -70,3 +72,15 @@ class SmaRsiStrategy(Strategy):
                 signals[symbol] = {'signal': 'hold'}
         
         return signals
+
+    def get_state(self):
+        """
+        Gets the current state of the strategy.
+
+        :return: A dictionary representing the strategy's state.
+        """
+        state = {}
+        for symbol, data in self.indicator_data.items():
+            if not data.empty:
+                state[symbol] = data.to_dict('records')
+        return state
