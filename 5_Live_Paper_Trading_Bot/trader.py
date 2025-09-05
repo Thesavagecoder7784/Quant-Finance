@@ -1,6 +1,7 @@
 import alpaca_trade_api as tradeapi
 import logging
 import asyncio
+import json
 from alpaca_trade_api.rest import TimeFrame
 from config import ALPACA_API_KEY, ALPACA_SECRET_KEY, ALPACA_BASE_URL
 
@@ -8,10 +9,25 @@ class Trader:
     """
     The Trader class that manages the trading loop, account information, and positions.
     """
-    def __init__(self, strategies, trade_capital_percentage):
+    def __init__(self, strategies, trade_capital_percentage, state_file="state.json"):
         self.api = tradeapi.REST(ALPACA_API_KEY, ALPACA_SECRET_KEY, ALPACA_BASE_URL, api_version='v2')
         self.strategies = strategies
         self.trade_capital_percentage = trade_capital_percentage
+        self.state_file = state_file
+        self.state = self.load_state()
+
+    def load_state(self):
+        """Loads the bot's state from a JSON file."""
+        try:
+            with open(self.state_file, 'r') as f:
+                return json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            return {}
+
+    def save_state(self):
+        """Saves the bot's state to a JSON file."""
+        with open(self.state_file, 'w') as f:
+            json.dump(self.state, f, indent=4)
 
     async def get_historical_data(self, symbol, timeframe, limit):
         """
@@ -121,3 +137,6 @@ class Trader:
                         await self.place_order(symbol, abs(qty_to_order), 'sell')
                     else:
                         logging.info(f"Already in a sufficient short position for {symbol}. No new SELL order needed.")
+            
+            self.state[strategy.name] = strategy.get_state() # Assumes strategy has a get_state method
+        self.save_state()
