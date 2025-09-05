@@ -1,11 +1,11 @@
 # Quant Finance Repository
 
-This repository serves as a comprehensive portfolio showcasing practical implementations of quantitative finance models, advanced analytical techniques, and algorithmic trading strategies. Developed with a focus on applying theoretical concepts to real-world financial data, this project demonstrates proficiency in quantitative modeling, statistical analysis, machine learning, and software development crucial for roles in quantitative finance.
+This repository serves as a comprehensive portfolio showcasing practical implementations of quantitative finance models, advanced analytical techniques, and algorithmic trading strategies. Developed with a focus on applying theoretical concepts to real-world financial data, this project demonstrates proficiency in quantitative modeling, statistical analysis, machine learning, and software development, crucial for roles in quantitative finance.
 
 ## Key Highlights & Skills Demonstrated
 
 *   **Quantitative Modeling:** Deep understanding and implementation of foundational and advanced financial models, including option pricing (Black-Scholes, Monte Carlo for exotic options), credit risk (Merton, Black-Cox), and asset pricing (CAPM, Fama-French, Carhart, AQR).
-*   **Stochastic Processes:** Simulation and application of various stochastic processes (Brownian Motion, Jump Diffusion, Lévy, Martingales, Poisson) fundamental for modeling asset price dynamics and risk.
+*   **Stochastic Processes:** Simulation and application of various stochastic processes (Brownian Motion, Jump Diffusion, Lévy, Martingales, Poisson), fundamental for modeling asset price dynamics and risk.
 *   **Portfolio Optimization:** Expertise in classical (Markowitz Mean-Variance, Black-Litterman) and modern (Reinforcement Learning) portfolio construction and risk management techniques.
 *   **Time Series Analysis:** Application of advanced time series models (ARIMA, GARCH) for forecasting and volatility modeling, alongside stationarity and cointegration tests for robust data analysis.
 *   **Machine Learning & Data Science:** Implementation of ML algorithms (XGBoost) for predictive modeling in trading, and natural language processing (VADER, FinBERT) for sentiment analysis on financial news.
@@ -93,7 +93,7 @@ This section covers the development and evaluation of data-driven trading strate
     -   `backtesting.py`: Core backtesting engine, simulating trades with realistic costs and calculating performance metrics (Cumulative Returns, Max Drawdown, Sharpe Ratio, Win Rate).
     -   `config.py`: Centralized configuration for strategy parameters.
     -   `data_ingestion.py`: Handles fetching historical data from various sources (NewsAPI, Reddit, Finviz, yfinance).
-    -   `database_manager.py`: Manages SQLite database for news sentiment.
+    -   `database_manager.py`: Manages the SQLite database for news sentiment.
     -   `main.py`: Main entry point to orchestrate the sentiment and backtesting pipeline.
     -   `pipeline_orchestrator.py`: Orchestrates data flow and parameter optimization.
     -   `sentiment_analysis.py`: Implements VADER and FinBERT for sentiment analysis.
