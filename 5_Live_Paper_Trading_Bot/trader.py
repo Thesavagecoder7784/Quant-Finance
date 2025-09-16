@@ -109,7 +109,7 @@ class Trader:
 
                 latest_close = data[symbol].iloc[-1]['close']
                 current_position = await self.get_current_position(symbol)
-                trade_value = buying_power * self.trade_capital_percentage
+                trade_value = (buying_power * self.trade_capital_percentage) / len(strategy.symbols)
                 trade_quantity = int(trade_value / latest_close) if latest_close > 0 else 0
 
                 logging.info(f"[{symbol}] Current Position: {current_position} shares | Calculated Trade Size: {trade_quantity} shares")
@@ -118,13 +118,23 @@ class Trader:
                     logging.warning(f"[{symbol}] Calculated trade quantity is 0. Skipping trade logic.")
                     continue
 
+                order_type = strategy.parameters.get('order_type', 'market')
+                limit_price = None
+
+                if order_type == 'limit':
+                    premium = strategy.parameters.get('limit_order_premium', 0.01)
+                    if signal == 'buy':
+                        limit_price = latest_close * (1 + premium)
+                    elif signal == 'sell':
+                        limit_price = latest_close * (1 - premium)
+
                 if signal == 'buy':
                     logging.info(f"BUY signal detected for {symbol}.")
                     target_position = trade_quantity
                     qty_to_order = target_position - current_position
                     if qty_to_order > 0:
                         logging.info(f"Current position is {current_position}. Target is {target_position}. Placing BUY for {qty_to_order} shares.")
-                        await self.place_order(symbol, qty_to_order, 'buy')
+                        await self.place_order(symbol, qty_to_order, 'buy', order_type, limit_price)
                     else:
                         logging.info(f"Already in a sufficient long position for {symbol}. No new BUY order needed.")
 
@@ -134,7 +144,7 @@ class Trader:
                     qty_to_order = target_position - current_position
                     if qty_to_order < 0:
                         logging.info(f"Current position is {current_position}. Target is {target_position}. Placing SELL for {abs(qty_to_order)} shares.")
-                        await self.place_order(symbol, abs(qty_to_order), 'sell')
+                        await self.place_order(symbol, abs(qty_to_order), 'sell', order_type, limit_price)
                     else:
                         logging.info(f"Already in a sufficient short position for {symbol}. No new SELL order needed.")
             
