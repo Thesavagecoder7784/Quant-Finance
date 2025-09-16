@@ -12,19 +12,12 @@ class Strategy(ABC):
     @abstractmethod
     def generate_signals(self, data):
         """
-        Generates trading signals based on the provided data.
-
-        :param data: A dictionary where keys are symbols and values are pandas DataFrames
-                     containing historical data.
-        :return: A dictionary of signals for each symbol.
+        Generates trading signals for each symbol.
         """
         pass
 
-    @abstractmethod
     def get_state(self):
         """
         Gets the current state of the strategy.
-
-        :return: A dictionary representing the strategy's state.
         """
-        pass
+        return {}
