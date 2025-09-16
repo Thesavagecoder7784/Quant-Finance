@@ -58,11 +58,11 @@ class SmaRsiStrategy(Strategy):
 
             is_buy_signal = (previous_data['SMA_Short'] < previous_data['SMA_Long'] and
                              latest_data['SMA_Short'] >= latest_data['SMA_Long'] and
-                             latest_data['RSI'] < rsi_overbought)
+                             latest_data['RSI'] < rsi_oversold)
 
             is_sell_signal = (previous_data['SMA_Short'] > previous_data['SMA_Long'] and
                               latest_data['SMA_Short'] <= latest_data['SMA_Long'] and
-                              latest_data['RSI'] > rsi_oversold)
+                              latest_data['RSI'] > rsi_overbought)
 
             if is_buy_signal:
                 signals[symbol] = {'signal': 'buy'}
