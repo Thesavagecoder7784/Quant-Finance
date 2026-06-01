@@ -57,22 +57,29 @@ class Trader:
             logging.error(f"Error getting position for {symbol}: {e}")
             return 0
 
-    async def place_order(self, symbol, qty, side):
+    async def place_order(self, symbol, qty, side, order_type='market', limit_price=None, stop_loss=None, take_profit=None):
         """
-        Places a market order and logs the action asynchronously.
+        Places a bracket order and logs the action asynchronously.
         """
         if qty <= 0:
             logging.warning(f"Attempted to place an order with zero or negative quantity for {symbol}. Skipping.")
             return None
         try:
-            order = self.api.submit_order(
-                symbol=symbol,
-                qty=qty,
-                side=side,
-                type='market',
-                time_in_force='gtc'
-            )
-            logging.info(f"Placed {side} order for {qty} shares of {symbol}. Order ID: {order.id}")
+            order_params = {
+                'symbol': symbol,
+                'qty': qty,
+                'side': side,
+                'type': order_type,
+                'time_in_force': 'gtc',
+                'order_class': 'bracket',
+                'stop_loss': stop_loss,
+                'take_profit': take_profit
+            }
+            if order_type == 'limit':
+                order_params['limit_price'] = limit_price
+
+            order = self.api.submit_order(**order_params)
+            logging.info(f"Placed {side} bracket order for {qty} shares of {symbol}. Order ID: {order.id}")
             return order
         except Exception as e:
             logging.error(f"Error placing {side} order for {symbol}: {e}")
@@ -128,13 +135,26 @@ class Trader:
                     elif signal == 'sell':
                         limit_price = latest_close * (1 - premium)
 
+                stop_loss_pct = strategy.parameters.get('stop_loss_pct', 0.02)
+                take_profit_pct = strategy.parameters.get('take_profit_pct', 0.04)
+
                 if signal == 'buy':
                     logging.info(f"BUY signal detected for {symbol}.")
                     target_position = trade_quantity
                     qty_to_order = target_position - current_position
                     if qty_to_order > 0:
+                        stop_loss_price = latest_close * (1 - stop_loss_pct)
+                        take_profit_price = latest_close * (1 + take_profit_pct)
                         logging.info(f"Current position is {current_position}. Target is {target_position}. Placing BUY for {qty_to_order} shares.")
-                        await self.place_order(symbol, qty_to_order, 'buy', order_type, limit_price)
+                        await self.place_order(
+                            symbol, 
+                            qty_to_order, 
+                            'buy', 
+                            order_type, 
+                            limit_price,
+                            stop_loss={'stop_price': stop_loss_price},
+                            take_profit={'limit_price': take_profit_price}
+                        )
                     else:
                         logging.info(f"Already in a sufficient long position for {symbol}. No new BUY order needed.")
 
@@ -143,8 +163,18 @@ class Trader:
                     target_position = -trade_quantity # Target a short position
                     qty_to_order = target_position - current_position
                     if qty_to_order < 0:
+                        stop_loss_price = latest_close * (1 + stop_loss_pct)
+                        take_profit_price = latest_close * (1 - take_profit_pct)
                         logging.info(f"Current position is {current_position}. Target is {target_position}. Placing SELL for {abs(qty_to_order)} shares.")
-                        await self.place_order(symbol, abs(qty_to_order), 'sell', order_type, limit_price)
+                        await self.place_order(
+                            symbol, 
+                            abs(qty_to_order), 
+                            'sell', 
+                            order_type, 
+                            limit_price,
+                            stop_loss={'stop_price': stop_loss_price},
+                            take_profit={'limit_price': take_profit_price}
+                        )
                     else:
                         logging.info(f"Already in a sufficient short position for {symbol}. No new SELL order needed.")
             

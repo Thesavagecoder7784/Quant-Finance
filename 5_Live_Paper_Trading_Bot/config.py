@@ -21,6 +21,8 @@ STRATEGIES = [
             "rsi_period": 14,
             "rsi_overbought": 70,
             "rsi_oversold": 30,
+            "stop_loss_pct": 0.02,
+            "take_profit_pct": 0.04,
         },
     ),
 ]

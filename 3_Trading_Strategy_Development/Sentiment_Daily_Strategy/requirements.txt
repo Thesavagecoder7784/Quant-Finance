@@ -1,0 +1,11 @@
+requests
+pandas
+nltk
+transformers
+torch
+praw
+beautifulsoup4
+yfinance
+matplotlib
+seaborn
+numpy
